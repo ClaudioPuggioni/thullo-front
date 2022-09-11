@@ -72,8 +72,8 @@ export default function IntroWin() {
             Your Boards
           </Box>
           <Grid container>
-            {boards ? boards.map((ele) => ele) : null}
             <CreateBoard backgrounds={backgrounds} loading={loading} />
+            {boards ? boards.map((ele) => <div></div>) : null}
           </Grid>
         </Box>
       </Container>
