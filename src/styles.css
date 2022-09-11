@@ -1,0 +1,11 @@
+#plusBoard:hover {
+  background-color: #aadde6;
+}
+.boardThumb {
+  height: 135px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  cursor: pointer;
+}
