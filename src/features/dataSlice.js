@@ -19,14 +19,14 @@ const getBoards = createAsyncThunk("data/getBoards", async () => {
 const createBoard = createAsyncThunk("data/createBoard", async (values) => {
   const URL = `${BASE_URL}/boards/create`;
   console.log(values);
-  // let response = await axiosClient({ method: "GET", url: URL });
+  // let response = await axiosClient({ method: "POST", url: URL });
   // console.log(response.data);
   // return response.data;
 });
 
 const dataSlice = createSlice({
   name: "data",
-  initialState: { loading: false, backgrounds: false },
+  initialState: { loading: false, backgrounds: false, boards: { sampleBoard: {} } },
   reducers: {},
   extraReducers: {
     [getBGs.pending]: (state, action) => {

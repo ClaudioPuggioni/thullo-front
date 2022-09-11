@@ -12,6 +12,7 @@ const signup = createAsyncThunk("auth/signup", async (values) => {
     if (err.response) {
       // Request made, server responded
       console.log("ERR.RESPONSE:");
+      alert(`ERROR-${err.response.status}: ${err.response.data}`);
       console.log(err.response.data);
       console.log(err.response.status);
       console.log(err.response.headers);
@@ -37,6 +38,7 @@ const login = createAsyncThunk("auth/login", async (values) => {
     if (err.response) {
       // Request made, server responded
       console.log("ERR.RESPONSE:");
+      alert(`ERROR-${err.response.status}: ${err.response.data}`);
       console.log(err.response.data);
       console.log(err.response.status);
       console.log(err.response.headers);
