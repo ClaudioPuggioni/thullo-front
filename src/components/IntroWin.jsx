@@ -41,7 +41,7 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 
 export default function IntroWin() {
   const [expanded, setExpanded] = React.useState("panel1");
-  const { backgrounds } = useSelector((state) => state.cabinet);
+  const { loading, backgrounds, boards } = useSelector((state) => state.cabinet);
   const dispatch = useDispatch();
 
   const handleChange = (panel) => (event, newExpanded) => {
@@ -50,6 +50,7 @@ export default function IntroWin() {
 
   useEffect(() => {
     dispatch(getBGs());
+    // eslint-disable-next-line
   }, []);
 
   return (
@@ -71,7 +72,8 @@ export default function IntroWin() {
             Your Boards
           </Box>
           <Grid container>
-            <CreateBoard backgrounds={backgrounds} />
+            {boards ? boards.map((ele) => ele) : null}
+            <CreateBoard backgrounds={backgrounds} loading={loading} />
           </Grid>
         </Box>
       </Container>

@@ -9,3 +9,7 @@
   border-radius: 5px;
   cursor: pointer;
 }
+
+.errorMsg {
+  color: #bc0000;
+}

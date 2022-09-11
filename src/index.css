@@ -25,6 +25,12 @@ body {
   align-items: center;
 }
 
+#loginContainer,
+#signupContainer {
+  min-height: 100vh;
+  min-width: 100vw;
+}
+
 #uiContainer,
 #introWinContainer {
   height: 100%;
@@ -55,4 +61,29 @@ body {
   width: 100%;
   max-width: 500px;
   padding: 0 10px;
+  color: rgb(132, 132, 132);
+}
+
+.selectedBgColor::before {
+  content: "✓";
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 35px;
+  width: 47px;
+  color: white;
+  backdrop-filter: brightness(90%);
+}
+
+.selectedBgImage::before {
+  position: absolute;
+  z-index: 1300;
+  content: "✓";
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 60px;
+  color: white;
+  backdrop-filter: brightness(90%);
 }
