@@ -9,7 +9,8 @@ import { MenuItem, Container, Box, Grid } from "@mui/material";
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
 import CreateBoard from "./CreateBoard";
 import { useDispatch, useSelector } from "react-redux";
-import { getBGs } from "../features/dataSlice";
+import { getBGs, getBoards } from "../features/dataSlice";
+import { useNavigate } from "react-router-dom";
 
 const Accordion = styled((props) => <MuiAccordion disableGutters elevation={0} square {...props} />)(({ theme }) => ({
   border: `1px solid ${theme.palette.divider}`,
@@ -42,7 +43,9 @@ const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
 export default function IntroWin() {
   const [expanded, setExpanded] = React.useState("panel1");
   const { loading, backgrounds, boards } = useSelector((state) => state.cabinet);
+  const { userInfo } = useSelector((state) => state.wall);
   const dispatch = useDispatch();
+  const goTo = useNavigate();
 
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
@@ -50,8 +53,13 @@ export default function IntroWin() {
 
   useEffect(() => {
     dispatch(getBGs());
+    dispatch(getBoards(userInfo._id));
     // eslint-disable-next-line
   }, []);
+
+  // useEffect(() => {
+  //   dispatch(getBoards());
+  // }, [boards]);
 
   return (
     <div id="introWinContainer">
@@ -71,12 +79,47 @@ export default function IntroWin() {
             <PermIdentityIcon sx={{ marginRight: "7px" }} />
             Your Boards
           </Box>
-          <Grid container>
+          <Grid container sx={{ display: "flex", gap: "10px" }}>
             <CreateBoard backgrounds={backgrounds} loading={loading} />
-            {boards ? Object.entries(boards).map((ele) => <div></div>) : null}
+            {Object.values(boards).length > 0
+              ? Object.values(boards).map((ele, idx) => (
+                  <div
+                    key={`boardItem${idx}`}
+                    className="boardThumb"
+                    onClick={() => goTo(`/board/${ele._id}`)}
+                    style={{ position: "relative", backgroundColor: ele.background[0] === "#" ? ele.background : null }}
+                  >
+                    {typeof ele.background === "object" ? (
+                      <img className="boardThumb" src={ele.background.small} style={{ objectFit: "cover" }} />
+                    ) : null}
+                    <div
+                      key={`boardItem${idx}`}
+                      onClick={() => goTo(`/board/${ele._id}`)}
+                      style={{
+                        position: "absolute",
+                        top: "15px",
+                        left: "15px",
+                        color:
+                          ele.background === "#FFFFFF" ||
+                          ele.background === "#ffffff" ||
+                          ele.background.small ===
+                            "https://images.unsplash.com/photo-1554147090-e1221a04a025?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwzNjEyODd8MHwxfHNlYXJjaHwyfHx3YWxscGFwZXJ8ZW58MHx8fHwxNjYzMDkzNzE5&ixlib=rb-1.2.1&q=80&w=200"
+                            ? "black"
+                            : "white",
+                      }}
+                    >
+                      {ele.title}
+                    </div>
+                  </div>
+                ))
+              : null}
           </Grid>
         </Box>
       </Container>
     </div>
   );
 }
+
+/* <div className="boardThumb" style={{ backgroundColor: ele.background[0] === "#" ? ele.background : null }}>
+{ele.background[0] !== "#" ? <img src={ele.background}></img> : null}
+</div> */

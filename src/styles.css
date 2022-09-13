@@ -1,15 +1,52 @@
 #plusBoard:hover {
   background-color: #aadde6;
+  filter: brightness(100%);
 }
 .boardThumb {
   height: 135px;
+  width: 100%;
+  max-width: 223px;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-weight: 500;
   border-radius: 5px;
   cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.23) 0px 2px 5px;
+}
+.boardThumb:hover {
+  filter: brightness(80%);
 }
 
 .errorMsg {
   color: #bc0000;
+}
+
+.menuBoardIcon {
+  height: 30px;
+  width: 30px;
+
+  border: none;
+  border-radius: 3px;
+
+  object-fit: cover;
+}
+
+#boardContainer {
+  display: flex;
+  background-size: cover;
+  background-position: center;
+}
+.createList {
+  padding-left: 10px;
+  display: flex;
+  align-items: center;
+  height: 37px;
+  width: 210px;
+  background-color: #ffffffba;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.createList:hover {
+  background-color: #ffffffe4;
 }

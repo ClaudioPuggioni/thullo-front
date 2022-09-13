@@ -7,9 +7,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import SelectBgColor from "./SelectBgColor";
 import SelectBgImage from "./SelectBgImage";
-import { createBoard } from "../features/dataSlice";
+import { createBoard, getBoards } from "../features/dataSlice";
+import AddSharpIcon from "@mui/icons-material/AddSharp";
 
-export default function CreateBoard({ backgrounds, loading }) {
+export default function CreateBoard({ backgrounds, loading, onMenu = false }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [selectedBG, setSelectedBG] = useState(null);
   const { userInfo } = useSelector((state) => state.wall);
@@ -45,19 +46,19 @@ export default function CreateBoard({ backgrounds, loading }) {
       <Grid
         aria-describedby={id}
         onClick={handleClick}
-        id="plusBoard"
-        className="boardThumb"
+        id={!onMenu ? "plusBoard" : null}
+        className={!onMenu ? "boardThumb" : null}
         item
         xs={3}
         sx={{
           color: "white",
           fontFamily: "Quicksand",
-          fontSize: "66px",
+          fontSize: !onMenu ? "66px" : null,
           fontWeight: 600,
-          backgroundColor: "#c2cbcd",
+          backgroundColor: !onMenu ? "#c2cbcd" : null,
         }}
       >
-        +
+        {!onMenu ? "+" : <AddSharpIcon fontSize="small" sx={{ color: "#505050", cursor: "pointer" }} />}
       </Grid>
       <Popover
         id={id}
@@ -74,20 +75,27 @@ export default function CreateBoard({ backgrounds, loading }) {
       >
         <Formik
           initialValues={{
-            boardTitle: "",
-            bgChoice: "white",
+            title: "",
+            background: "#ffffff",
           }}
           validationSchema={Yup.object({
-            boardTitle: Yup.string().min(3, "Must be at least 3 characters").max(55, "Must be 55 characters or less").required("Required"),
-            bgChoice: Yup.string(),
+            title: Yup.string().min(3, "Must be at least 3 characters").max(55, "Must be 55 characters or less").required("Required"),
+            background: Yup.lazy((value) => {
+              switch (typeof value) {
+                case "object":
+                  return Yup.object();
+                case "string":
+                  return Yup.string();
+                default:
+                  return Yup.string();
+              }
+            }),
           })}
           onSubmit={(values) => {
-            // console.log("TYPE IS", values.image.type);
-            // console.log("SIZE IS", values.image.size);
-            // alert(JSON.stringify(values, null, 2));
-            console.log("submission:", values);
-            dispatch(createBoard({ values, user: userInfo._id }));
-            // setTimeout(() => goTo("/"), 3000);
+            dispatch(createBoard({ ...values, userId: userInfo._id }));
+            setSelectedBG(null);
+            setAnchorEl(null);
+            setTimeout(() => dispatch(getBoards(userInfo._id)), 1000);
           }}
         >
           {({ setFieldValue }) => (
@@ -99,7 +107,7 @@ export default function CreateBoard({ backgrounds, loading }) {
                     {backgrounds
                       ? backgrounds.map((ele, idx) => (
                           <SelectBgImage
-                            key={`bgChoice${idx}`}
+                            key={`background${idx}`}
                             ele={ele}
                             idx={idx}
                             setFieldValue={setFieldValue}
@@ -112,7 +120,7 @@ export default function CreateBoard({ backgrounds, loading }) {
                   <div style={{ display: "flex", gap: "5px", width: "100%" }}>
                     {["#0767a0", "#b27b36", "#468138", "#953c2e", "#755285"].map((ele, idx) => (
                       <SelectBgColor
-                        key={`bgChoice${idx}`}
+                        key={`background${idx}`}
                         ele={ele}
                         idx={idx + 4}
                         setFieldValue={setFieldValue}
@@ -134,7 +142,7 @@ export default function CreateBoard({ backgrounds, loading }) {
                   required={true}
                   onChange={(e) => {
                     console.log(e.target.value);
-                    setFieldValue("boardTitle", e.target.value);
+                    setFieldValue("title", e.target.value);
                   }}
                   style={{ margin: "4px 0", paddingLeft: "8px", height: "27px", width: "100%" }}
                 />

@@ -4,9 +4,8 @@ export default function SelectBgImage({ ele, idx, setFieldValue, selectedBG, sel
   return (
     <div
       onClick={(e) => {
-        console.log(selectedBG);
         selectBG(idx);
-        selectedBG !== idx ? setFieldValue("bgChoice", ele.urls.full) : setFieldValue("bgChoice", "#FFFFFF");
+        selectedBG !== idx ? setFieldValue("background", { full: ele.urls.full, small: ele.urls.thumb }) : setFieldValue("background", "#FFFFFF");
       }}
       className={selectedBG === idx ? "selectedBgImage" : ""}
       style={{ position: "relative", height: "100%", width: "60px" }}

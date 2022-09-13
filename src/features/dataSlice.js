@@ -9,25 +9,36 @@ const getBGs = createAsyncThunk("data/getBGs", async () => {
   return response.data;
 });
 
-const getBoards = createAsyncThunk("data/getBoards", async () => {
-  const URL = `${BASE_URL}/boards`;
+const getBoards = createAsyncThunk("data/getBoards", async (userId) => {
+  const URL = `${BASE_URL}/board`;
+  let response = await axiosClient({ method: "GET", url: URL });
+  response.data.userId = userId;
+  console.log("GETBOARDS/response.data:", response.data);
+  return response.data;
+});
+
+const createBoard = createAsyncThunk("data/createBoard", async (values) => {
+  const URL = `${BASE_URL}/board/create`;
+  let response = await axiosClient({ method: "POST", url: URL, data: values });
+  return response.data;
+});
+
+const getSingleBoard = createAsyncThunk("data/getSingleBoard", async (boardId) => {
+  const URL = `${BASE_URL}/board/${boardId}`;
   let response = await axiosClient({ method: "GET", url: URL });
   console.log(response.data);
   return response.data;
 });
 
-const createBoard = createAsyncThunk("data/createBoard", async (values) => {
-  const URL = `${BASE_URL}/boards/create`;
-  console.log(values);
-  // let response = await axiosClient({ method: "POST", url: URL });
-  // console.log(response.data);
-  // return response.data;
-});
-
 const dataSlice = createSlice({
   name: "data",
-  initialState: { loading: false, backgrounds: false, boards: { sampleBoard: {} } },
-  reducers: {},
+  initialState: { loading: false, backgrounds: false, boards: {}, currBoard: false },
+  reducers: {
+    clearCabinet: (state, action) => {
+      state.backgrounds = false;
+      state.boards = {};
+    },
+  },
   extraReducers: {
     [getBGs.pending]: (state, action) => {
       state.loading = true;
@@ -47,13 +58,30 @@ const dataSlice = createSlice({
       state.loading = false;
     },
     [getBoards.fulfilled]: (state, action) => {
-      state.boards = action.payload;
+      state.boards = {};
+      for (const board of action.payload) {
+        if (board.admin === action.payload.userId) state.boards[board._id] = board;
+      }
       console.log("GETBOARDS/STATE:", current(state));
+      state.loading = false;
+    },
+    [getSingleBoard.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [getSingleBoard.rejected]: (state, action) => {
+      state.loading = false;
+    },
+    [getSingleBoard.fulfilled]: (state, action) => {
+      state.currBoard = false;
+      state.currBoard = action.payload;
+      console.log("GETSINGLEBOARD/STATE:", current(state));
       state.loading = false;
     },
   },
 });
 
-export { getBGs, getBoards, createBoard };
+export { getBGs, getBoards, createBoard, getSingleBoard };
+
+export const { clearCabinet } = dataSlice.actions;
 
 export default dataSlice.reducer;

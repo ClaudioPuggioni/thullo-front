@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Routes, Route, useNavigate } from "react-router-dom";
+import { clearCabinet } from "../features/dataSlice";
 import Board from "./Board";
 import IntroWin from "./IntroWin";
 import LogIn from "./LogIn";
@@ -10,9 +11,15 @@ import UserInterface from "./UserInterface";
 export default function Main() {
   const { lgn } = useSelector((state) => state.wall);
   const goTo = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    !lgn ? goTo("/login") : goTo("/");
+    if (!lgn) {
+      dispatch(clearCabinet());
+      goTo("/login");
+    } else {
+      goTo("/");
+    }
     // eslint-disable-next-line
   }, [lgn]);
 
