@@ -11,20 +11,15 @@ const signup = createAsyncThunk("auth/signup", async (values) => {
   } catch (err) {
     if (err.response) {
       // Request made, server responded
-      console.log("ERR.RESPONSE:");
       alert(`ERROR-${err.response.status}: ${err.response.data}`);
-      console.log(err.response.data);
-      console.log(err.response.status);
-      console.log(err.response.headers);
     } else if (err.request) {
       // Request made, no response received
-      console.log("ERR.REQUEST:");
-      console.log(err.request);
+      console.log("ERR.REQUEST:", err.request);
     } else {
       // Error triggered in response setup
-      console.log("ERR.REQUEST/FAIL:");
-      console.log(err.message);
+      console.log("ERR.REQUEST/FAIL:", err.message);
     }
+    return;
   }
 });
 
@@ -37,20 +32,15 @@ const login = createAsyncThunk("auth/login", async (values) => {
   } catch (err) {
     if (err.response) {
       // Request made, server responded
-      console.log("ERR.RESPONSE:");
       alert(`ERROR-${err.response.status}: ${err.response.data}`);
-      console.log(err.response.data);
-      console.log(err.response.status);
-      console.log(err.response.headers);
     } else if (err.request) {
       // Request made, no response received
-      console.log("ERR.REQUEST:");
-      console.log(err.request);
+      console.log("ERR.REQUEST:", err.request);
     } else {
       // Error triggered in response setup
-      console.log("ERR.REQUEST/FAIL:");
-      console.log(err.message);
+      console.log("ERR.REQUEST/FAIL:", err.message);
     }
+    return;
   }
 });
 
@@ -74,6 +64,7 @@ const authSlice = createSlice({
     },
     [signup.fulfilled]: (state, action) => {
       state.userInfo = action.payload.user;
+      localStorage.setItem("email", action.payload.user.email);
       localStorage.setItem("accessToken", action.payload.accessToken);
       localStorage.setItem("refreshToken", action.payload.refreshToken);
       alert(action.payload.msg);
@@ -91,6 +82,7 @@ const authSlice = createSlice({
     },
     [login.fulfilled]: (state, action) => {
       state.userInfo = action.payload.user;
+      localStorage.setItem("email", action.payload.user.email);
       localStorage.setItem("accessToken", action.payload.accessToken);
       localStorage.setItem("refreshToken", action.payload.refreshToken);
       alert(action.payload.msg);

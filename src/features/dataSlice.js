@@ -36,8 +36,75 @@ const createList = createAsyncThunk("board/addlist", async (values) => {
 const getSingleBoard = createAsyncThunk("data/getSingleBoard", async (boardId) => {
   const URL = `${BASE_URL}/board/${boardId}`;
   let response = await axiosClient({ method: "GET", url: URL });
-  console.log(response.data);
   return response.data;
+});
+
+const addMember = createAsyncThunk("data/addMember", async (values) => {
+  const URL = `${BASE_URL}/board/member/add`;
+
+  try {
+    let response = await axiosClient({ method: "POST", url: URL, data: values });
+    console.log("addMember/RESPONSE.DATA:", response.data);
+    alert(response.data.msg);
+    return response.data.member;
+  } catch (err) {
+    if (err.response) {
+      // Request made, server responded
+      alert(`ERROR-${err.response.status}: ${err.response.data}`);
+    } else if (err.request) {
+      // Request made, no response received
+      console.log("ERR.REQUEST:", err.request);
+    } else {
+      // Error triggered in response setup
+      console.log("ERR.REQUEST/FAIL:", err.message);
+    }
+    return;
+  }
+});
+
+const delMember = createAsyncThunk("data/delMember", async (values) => {
+  const URL = `${BASE_URL}/board/member/del`;
+
+  try {
+    let response = await axiosClient({ method: "POST", url: URL, data: values });
+    console.log("delMember/RESPONSE.DATA:", response.data);
+    alert(response.data.msg);
+    return response.data.member;
+  } catch (err) {
+    if (err.response) {
+      // Request made, server responded
+      alert(`ERROR-${err.response.status}: ${err.response.data}`);
+    } else if (err.request) {
+      // Request made, no response received
+      console.log("ERR.REQUEST:", err.request);
+    } else {
+      // Error triggered in response setup
+      console.log("ERR.REQUEST/FAIL:", err.message);
+    }
+    return;
+  }
+});
+
+const visibility = createAsyncThunk("data/visibility", async (values) => {
+  const URL = `${BASE_URL}/board/visibility`;
+
+  try {
+    let response = await axiosClient({ method: "POST", url: URL, data: values });
+    console.log("visibility/RESPONSE.DATA:", response.data);
+    return response.data;
+  } catch (err) {
+    if (err.response) {
+      // Request made, server responded
+      alert(`ERROR-${err.response.status}: ${err.response.data}`);
+    } else if (err.request) {
+      // Request made, no response received
+      console.log("ERR.REQUEST:", err.request);
+    } else {
+      // Error triggered in response setup
+      console.log("ERR.REQUEST/FAIL:", err.message);
+    }
+    return;
+  }
 });
 
 const dataSlice = createSlice({
@@ -87,10 +154,43 @@ const dataSlice = createSlice({
       console.log("GETSINGLEBOARD/STATE:", current(state));
       state.loading = false;
     },
+    [addMember.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [addMember.rejected]: (state, action) => {
+      state.loading = false;
+    },
+    [addMember.fulfilled]: (state, action) => {
+      state.currBoard.members = action.payload ? state.currBoard.members.concat(action.payload) : state.currBoard.members;
+      console.log("ADDMEMBER/STATE:", current(state));
+      state.loading = false;
+    },
+    [delMember.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [delMember.rejected]: (state, action) => {
+      state.loading = false;
+    },
+    [delMember.fulfilled]: (state, action) => {
+      state.currBoard.members = action.payload ? state.currBoard.members.filter((ele) => ele._id !== action.payload._id) : state.currBoard.members;
+      console.log("DELMEMBER/STATE:", current(state));
+      state.loading = false;
+    },
+    [visibility.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [visibility.rejected]: (state, action) => {
+      state.loading = false;
+    },
+    [visibility.fulfilled]: (state, action) => {
+      state.currBoard.active = action.payload.active;
+      console.log("VISIBILITY/STATE:", current(state));
+      state.loading = false;
+    },
   },
 });
 
-export { getBGs, getBoards, createBoard, getSingleBoard, createList };
+export { getBGs, getBoards, createBoard, getSingleBoard, addMember, delMember, visibility, createList };
 
 export const { clearCabinet } = dataSlice.actions;
 
