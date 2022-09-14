@@ -23,6 +23,16 @@ const createBoard = createAsyncThunk("data/createBoard", async (values) => {
   return response.data;
 });
 
+
+// http://localhost:8000/board/addlist
+const createList = createAsyncThunk("board/addlist", async (values) => {
+
+  const URL = `${BASE_URL}/board/addlist`;
+
+  let response = await axiosClient({ method: "POST", url: URL, data: values });
+  return response.data;
+});
+
 const getSingleBoard = createAsyncThunk("data/getSingleBoard", async (boardId) => {
   const URL = `${BASE_URL}/board/${boardId}`;
   let response = await axiosClient({ method: "GET", url: URL });
@@ -80,7 +90,7 @@ const dataSlice = createSlice({
   },
 });
 
-export { getBGs, getBoards, createBoard, getSingleBoard };
+export { getBGs, getBoards, createBoard, getSingleBoard, createList };
 
 export const { clearCabinet } = dataSlice.actions;
 
