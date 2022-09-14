@@ -74,6 +74,7 @@ const authSlice = createSlice({
     },
     [signup.fulfilled]: (state, action) => {
       state.userInfo = action.payload.user;
+      localStorage.setItem("email", action.payload.user.email);
       localStorage.setItem("accessToken", action.payload.accessToken);
       localStorage.setItem("refreshToken", action.payload.refreshToken);
       alert(action.payload.msg);
@@ -91,6 +92,8 @@ const authSlice = createSlice({
     },
     [login.fulfilled]: (state, action) => {
       state.userInfo = action.payload.user;
+      console.log("action.payload.refreshToken:", action.payload.refreshToken);
+      localStorage.setItem("email", action.payload.user.email);
       localStorage.setItem("accessToken", action.payload.accessToken);
       localStorage.setItem("refreshToken", action.payload.refreshToken);
       alert(action.payload.msg);

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
@@ -6,8 +6,9 @@ import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Button, Radio, styled, TextField } from "@mui/material";
+import { addMember, delMember, getSingleBoard } from "../features/dataSlice";
 
 const style = {
   position: "absolute",
@@ -22,6 +23,10 @@ const style = {
 };
 
 export default function MembersWin({ open, boardId }) {
+  const dispatch = useDispatch();
+  const [addInput, setAddInput] = useState("");
+  const [delInput, setDelInput] = useState("");
+  const [loading, setLoading] = useState(false);
   const [openModal, setOpenModal] = useState(false);
   const { currBoard } = useSelector((state) => state.cabinet);
   const { userInfo } = useSelector((state) => state.wall);
@@ -34,6 +39,19 @@ export default function MembersWin({ open, boardId }) {
     setSelectedValue(event.target.value);
   };
 
+  const handleMember = ({ input, type }) => {
+    setLoading(true);
+    const values = { userId: userInfo._id, boardId: currBoard._id, memberEmail: null, memberUsername: null };
+    input.includes("@") ? (values.memberEmail = input) : (values.memberUsername = input);
+    type === "del" ? dispatch(delMember(values)) : dispatch(addMember(values));
+    setAddInput("");
+    setDelInput("");
+    dispatch(getSingleBoard(currBoard._id));
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  };
+
   const controlProps = (item) => ({
     checked: selectedValue === item,
     onChange: handleChange,
@@ -41,8 +59,6 @@ export default function MembersWin({ open, boardId }) {
     name: "color-radio-button-demo",
     inputProps: { "aria-label": item },
   });
-
-  useEffect(() => {}, []);
 
   const GreenColorButton = styled(Button)(({ theme }) => ({
     color: theme.palette.getContrastText("#000000"),
@@ -124,14 +140,39 @@ export default function MembersWin({ open, boardId }) {
                 </Box>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: "20px" }}>
-                <TextField id="standard-password-input" label="Username/Email" type="test" variant="standard" />
-                <GreenColorButton variant="contained" sx={{ display: "flex", alignSelf: "flex-end" }}>
+                <TextField
+                  onChange={(e) => setAddInput(e.target.value)}
+                  className="standard-password-input"
+                  label="Username/Email"
+                  value={addInput}
+                  type="test"
+                  variant="standard"
+                />
+                <GreenColorButton
+                  onClick={() => handleMember({ type: "add", input: addInput })}
+                  variant="contained"
+                  value={addInput}
+                  sx={{ display: "flex", alignSelf: "flex-end" }}
+                  disabled={loading}
+                >
                   Add Member
                 </GreenColorButton>
               </Box>
               <Box sx={{ display: "flex", alignItems: "center", gap: "20px" }}>
-                <TextField id="standard-password-input" label="Username/Email" type="test" variant="standard" />
-                <RedColorButton variant="contained" sx={{ padding: "6.3px 17.5px", display: "flex", alignSelf: "flex-end" }}>
+                <TextField
+                  onChange={(e) => setDelInput(e.target.value)}
+                  className="standard-password-input"
+                  label="Username/Email"
+                  value={delInput}
+                  type="test"
+                  variant="standard"
+                />
+                <RedColorButton
+                  onClick={() => handleMember({ type: "del", input: delInput })}
+                  variant="contained"
+                  sx={{ padding: "6.3px 17.5px", display: "flex", alignSelf: "flex-end" }}
+                  disabled={loading}
+                >
                   Del Member
                 </RedColorButton>
               </Box>

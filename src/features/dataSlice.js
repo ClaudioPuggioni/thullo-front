@@ -26,8 +26,68 @@ const createBoard = createAsyncThunk("data/createBoard", async (values) => {
 const getSingleBoard = createAsyncThunk("data/getSingleBoard", async (boardId) => {
   const URL = `${BASE_URL}/board/${boardId}`;
   let response = await axiosClient({ method: "GET", url: URL });
-  console.log(response.data);
   return response.data;
+});
+
+const addMember = createAsyncThunk("data/addMember", async (values) => {
+  const URL = `${BASE_URL}/board/member/add`;
+
+  try {
+    let response = await axiosClient({ method: "POST", url: URL, data: values });
+    console.log("addMember/RESPONSE.DATA:", response.data);
+    return response.data;
+  } catch (err) {
+    if (err.response) {
+      // Request made, server responded
+      console.log("ERR.RESPONSE:");
+      alert(`ERROR-${err.response.status}: ${err.response.data}`);
+      console.log(err.response.data);
+      console.log(err.response.status);
+      console.log(err.response.headers);
+    } else if (err.request) {
+      // Request made, no response received
+      console.log("ERR.REQUEST:");
+      console.log(err.request);
+    } else {
+      // Error triggered in response setup
+      console.log("ERR.REQUEST/FAIL:");
+      console.log(err.message);
+    }
+  }
+});
+
+const delMember = createAsyncThunk("data/delMember", async (values) => {
+  const URL = `${BASE_URL}/board/member/del`;
+
+  try {
+    let response = await axiosClient({ method: "POST", url: URL, data: values });
+    console.log("delMember/RESPONSE.DATA:", response.data);
+    return response.data;
+  } catch (err) {
+    if (err.response) {
+      // Request made, server responded
+      console.log("ERR.RESPONSE:");
+      alert(`ERROR-${err.response.status}: ${err.response.data}`);
+      console.log(err.response.data);
+      console.log(err.response.status);
+      console.log(err.response.headers);
+    } else if (err.request) {
+      // Request made, no response received
+      console.log("ERR.REQUEST:");
+      console.log(err.request);
+    } else {
+      // Error triggered in response setup
+      console.log("ERR.REQUEST/FAIL:");
+      console.log(err.message);
+    }
+  }
+});
+
+const visibility = createAsyncThunk("data/visibility", async (boardId) => {
+  const URL = `${BASE_URL}/board/visibility`;
+  // let response = await axiosClient({ method: "POST", url: URL });
+  // console.log("visibility/RESPONSE.DATA:", response.data);
+  // return response.data;
 });
 
 const dataSlice = createSlice({
@@ -77,10 +137,20 @@ const dataSlice = createSlice({
       console.log("GETSINGLEBOARD/STATE:", current(state));
       state.loading = false;
     },
+    [addMember.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [addMember.rejected]: (state, action) => {
+      state.loading = false;
+    },
+    [addMember.fulfilled]: (state, action) => {
+      alert(action.payload);
+      state.loading = false;
+    },
   },
 });
 
-export { getBGs, getBoards, createBoard, getSingleBoard };
+export { getBGs, getBoards, createBoard, getSingleBoard, addMember, delMember };
 
 export const { clearCabinet } = dataSlice.actions;
 
