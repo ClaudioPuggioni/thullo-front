@@ -25,8 +25,6 @@ axiosClient.interceptors.response.use(
     console.log(originalConfig);
     if ((errCode === 401 && originalConfig.url === "auth/token") || (errCode === "401" && originalConfig.url === "auth/token")) Promise.reject(err);
     if (errCode === 401 || errCode === "401") {
-      console.log("localStorage:", localStorage.getItem("email"));
-      console.log("localStorage:", localStorage.getItem("refreshToken"));
       const tokenResponse = await axiosClient.post("/auth/token", {
         email: localStorage.getItem("email"),
         refreshToken: localStorage.getItem("refreshToken"),

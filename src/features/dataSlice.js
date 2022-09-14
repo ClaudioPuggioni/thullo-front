@@ -35,24 +35,20 @@ const addMember = createAsyncThunk("data/addMember", async (values) => {
   try {
     let response = await axiosClient({ method: "POST", url: URL, data: values });
     console.log("addMember/RESPONSE.DATA:", response.data);
-    return response.data;
+    alert(response.data.msg);
+    return response.data.member;
   } catch (err) {
     if (err.response) {
       // Request made, server responded
-      console.log("ERR.RESPONSE:");
       alert(`ERROR-${err.response.status}: ${err.response.data}`);
-      console.log(err.response.data);
-      console.log(err.response.status);
-      console.log(err.response.headers);
     } else if (err.request) {
       // Request made, no response received
-      console.log("ERR.REQUEST:");
-      console.log(err.request);
+      console.log("ERR.REQUEST:", err.request);
     } else {
       // Error triggered in response setup
-      console.log("ERR.REQUEST/FAIL:");
-      console.log(err.message);
+      console.log("ERR.REQUEST/FAIL:", err.message);
     }
+    return;
   }
 });
 
@@ -62,32 +58,43 @@ const delMember = createAsyncThunk("data/delMember", async (values) => {
   try {
     let response = await axiosClient({ method: "POST", url: URL, data: values });
     console.log("delMember/RESPONSE.DATA:", response.data);
+    alert(response.data.msg);
+    return response.data.member;
+  } catch (err) {
+    if (err.response) {
+      // Request made, server responded
+      alert(`ERROR-${err.response.status}: ${err.response.data}`);
+    } else if (err.request) {
+      // Request made, no response received
+      console.log("ERR.REQUEST:", err.request);
+    } else {
+      // Error triggered in response setup
+      console.log("ERR.REQUEST/FAIL:", err.message);
+    }
+    return;
+  }
+});
+
+const visibility = createAsyncThunk("data/visibility", async (values) => {
+  const URL = `${BASE_URL}/board/visibility`;
+
+  try {
+    let response = await axiosClient({ method: "POST", url: URL, data: values });
+    console.log("visibility/RESPONSE.DATA:", response.data);
     return response.data;
   } catch (err) {
     if (err.response) {
       // Request made, server responded
-      console.log("ERR.RESPONSE:");
       alert(`ERROR-${err.response.status}: ${err.response.data}`);
-      console.log(err.response.data);
-      console.log(err.response.status);
-      console.log(err.response.headers);
     } else if (err.request) {
       // Request made, no response received
-      console.log("ERR.REQUEST:");
-      console.log(err.request);
+      console.log("ERR.REQUEST:", err.request);
     } else {
       // Error triggered in response setup
-      console.log("ERR.REQUEST/FAIL:");
-      console.log(err.message);
+      console.log("ERR.REQUEST/FAIL:", err.message);
     }
+    return;
   }
-});
-
-const visibility = createAsyncThunk("data/visibility", async (boardId) => {
-  const URL = `${BASE_URL}/board/visibility`;
-  // let response = await axiosClient({ method: "POST", url: URL });
-  // console.log("visibility/RESPONSE.DATA:", response.data);
-  // return response.data;
 });
 
 const dataSlice = createSlice({
@@ -144,13 +151,36 @@ const dataSlice = createSlice({
       state.loading = false;
     },
     [addMember.fulfilled]: (state, action) => {
-      alert(action.payload);
+      state.currBoard.members = action.payload ? state.currBoard.members.concat(action.payload) : state.currBoard.members;
+      console.log("ADDMEMBER/STATE:", current(state));
+      state.loading = false;
+    },
+    [delMember.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [delMember.rejected]: (state, action) => {
+      state.loading = false;
+    },
+    [delMember.fulfilled]: (state, action) => {
+      state.currBoard.members = action.payload ? state.currBoard.members.filter((ele) => ele._id !== action.payload._id) : state.currBoard.members;
+      console.log("DELMEMBER/STATE:", current(state));
+      state.loading = false;
+    },
+    [visibility.pending]: (state, action) => {
+      state.loading = true;
+    },
+    [visibility.rejected]: (state, action) => {
+      state.loading = false;
+    },
+    [visibility.fulfilled]: (state, action) => {
+      state.currBoard.active = action.payload.active;
+      console.log("VISIBILITY/STATE:", current(state));
       state.loading = false;
     },
   },
 });
 
-export { getBGs, getBoards, createBoard, getSingleBoard, addMember, delMember };
+export { getBGs, getBoards, createBoard, getSingleBoard, addMember, delMember, visibility };
 
 export const { clearCabinet } = dataSlice.actions;
 

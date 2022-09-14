@@ -8,7 +8,8 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Radio, styled, TextField } from "@mui/material";
-import { addMember, delMember, getSingleBoard } from "../features/dataSlice";
+import { addMember, delMember, visibility } from "../features/dataSlice";
+import { useEffect } from "react";
 
 const style = {
   position: "absolute",
@@ -33,7 +34,10 @@ export default function MembersWin({ open, boardId }) {
   const handleOpen = () => setOpenModal(true);
   const handleClose = () => setOpenModal(false);
 
-  const [selectedValue, setSelectedValue] = useState("a");
+  const [selectedValue, setSelectedValue] = useState(
+    // typeof currBoard.active === "booleon" && currBoard.active ? "a" : typeof currBoard.active === "booleon" && !currBoard.active ? "b" : null
+    null
+  );
 
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
@@ -46,7 +50,6 @@ export default function MembersWin({ open, boardId }) {
     type === "del" ? dispatch(delMember(values)) : dispatch(addMember(values));
     setAddInput("");
     setDelInput("");
-    dispatch(getSingleBoard(currBoard._id));
     setTimeout(() => {
       setLoading(false);
     }, 1000);
@@ -76,6 +79,10 @@ export default function MembersWin({ open, boardId }) {
     },
   }));
 
+  useEffect(() => {
+    setSelectedValue(currBoard.active ? "a" : !currBoard.active ? "b" : null);
+  }, [currBoard]);
+
   return (
     <div>
       <ListItemButton
@@ -103,8 +110,8 @@ export default function MembersWin({ open, boardId }) {
             Board Members
           </Typography>
           {currBoard
-            ? currBoard.members.map((ele) => (
-                <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            ? currBoard.members.map((ele, idx) => (
+                <Typography key={`member${idx}`} id="modal-modal-description" sx={{ mt: 2 }}>
                   {currBoard.admin === ele._id ? `${ele.username}(admin)` : ele.username}
                 </Typography>
               ))
@@ -120,6 +127,7 @@ export default function MembersWin({ open, boardId }) {
                 </Typography>
                 <Box sx={{ display: "flex" }}>
                   <Radio
+                    onClick={() => dispatch(visibility({ boardId: currBoard._id, userId: userInfo._id, bool: "true" }))}
                     {...controlProps("a")}
                     sx={{
                       color: "#25b63b",
@@ -129,6 +137,7 @@ export default function MembersWin({ open, boardId }) {
                     }}
                   />
                   <Radio
+                    onClick={() => dispatch(visibility({ boardId: currBoard._id, userId: userInfo._id, bool: "false" }))}
                     {...controlProps("b")}
                     sx={{
                       color: "#ce334d",
