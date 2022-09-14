@@ -23,10 +23,8 @@ const createBoard = createAsyncThunk("data/createBoard", async (values) => {
   return response.data;
 });
 
-
 // http://localhost:8000/board/addlist
 const createList = createAsyncThunk("board/addlist", async (values) => {
-
   const URL = `${BASE_URL}/board/addlist`;
 
   let response = await axiosClient({ method: "POST", url: URL, data: values });
@@ -137,7 +135,12 @@ const dataSlice = createSlice({
     [getBoards.fulfilled]: (state, action) => {
       state.boards = {};
       for (const board of action.payload) {
-        if (board.admin === action.payload.userId) state.boards[board._id] = board;
+        // if (board.admin === action.payload.userId) {
+        //   console.log(board.admin, action.payload.userId);
+        //   console.log(board._id, action.payload.userId);
+        //   state.boards[board._id] = board;
+        // }
+        if (board.members.includes(action.payload.userId)) state.boards[board._id] = board;
       }
       console.log("GETBOARDS/STATE:", current(state));
       state.loading = false;
