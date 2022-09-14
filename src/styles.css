@@ -43,10 +43,10 @@
   align-items: center;
   height: 37px;
   width: 210px;
-  background-color: #ffffffba;
+  background-color: #ffffffb1;
   border-radius: 3px;
   cursor: pointer;
 }
 .createList:hover {
-  background-color: #ffffffe4;
+  background-color: #ffffffdd;
 }

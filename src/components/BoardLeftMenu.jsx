@@ -15,11 +15,10 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import DashboardIcon from "@mui/icons-material/Dashboard";
-import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import AddSharpIcon from "@mui/icons-material/AddSharp";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import CreateBoard from "./CreateBoard";
+import MembersWin from "./MembersWin";
 
 const drawerWidth = 240;
 
@@ -115,29 +114,28 @@ export default function BoardLeftMenu() {
         </DrawerHeader>
         <Divider />
         <List>
-          {["Boards", "Members"].map((text, idx) => (
-            <ListItem key={text} disablePadding sx={{ display: "block" }}>
-              <ListItemButton
-                onClick={idx === 0 ? () => goTo("/") : null}
+          <ListItem disablePadding sx={{ display: "block" }}>
+            <ListItemButton
+              onClick={() => goTo("/")}
+              sx={{
+                minHeight: 48,
+                justifyContent: open ? "initial" : "center",
+                px: 2.5,
+              }}
+            >
+              <ListItemIcon
                 sx={{
-                  minHeight: 48,
-                  justifyContent: open ? "initial" : "center",
-                  px: 2.5,
+                  minWidth: 0,
+                  mr: open ? 3 : "auto",
+                  justifyContent: "center",
                 }}
               >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : "auto",
-                    justifyContent: "center",
-                  }}
-                >
-                  {idx % 2 === 0 ? <DashboardIcon /> : <PersonOutlineIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-          ))}
+                {<DashboardIcon />}
+              </ListItemIcon>
+              <ListItemText primary={"Boards"} sx={{ opacity: open ? 1 : 0 }} />
+            </ListItemButton>
+            <MembersWin open={open} />
+          </ListItem>
         </List>
         <Divider />
         <Box sx={{ padding: "25px", display: "flex", justifyContent: "space-between" }}>

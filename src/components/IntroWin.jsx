@@ -57,10 +57,6 @@ export default function IntroWin() {
     // eslint-disable-next-line
   }, []);
 
-  // useEffect(() => {
-  //   dispatch(getBoards());
-  // }, [boards]);
-
   return (
     <div id="introWinContainer">
       <Container sx={{ height: "100%", display: "flex", justifyContent: "space-between", marginTop: "25px" }}>
